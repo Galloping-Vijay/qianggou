@@ -26,7 +26,8 @@ return   [
     ],
     'view_replace_str'  =>  [
         '__PUBLIC__'=>'/public',
-        '__ROOT__'=>''
+        '__ROOT__'=>'',
+        '__ADMIN__'=> '/admin',
     ],
     'PAYMENT_PLUGIN_PATH' =>  PLUGIN_PATH.'payment',
     'LOGIN_PLUGIN_PATH' =>  PLUGIN_PATH.'login',

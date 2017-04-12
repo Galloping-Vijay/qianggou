@@ -8,8 +8,6 @@
 
 namespace app\home\controller;
 
-
-use app\home\logic\Fpage;
 use app\home\model\FlashSale;
 use app\home\model\Goods;
 use app\home\model\GoodsImages;

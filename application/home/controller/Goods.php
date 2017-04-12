@@ -14,8 +14,10 @@ use think\Db;
 class Goods extends Base
 {
     public function index(){
-        echo 'goods';
+        $str = 'root12345';
+        echo __DIR__;
     }
+
 
     //商品详情页
     public function goodsInfo(){

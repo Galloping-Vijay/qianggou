@@ -128,4 +128,9 @@ class Promotion extends Base
         $tpl = input('tpl', 'search_goods');
         return $this->fetch($tpl);
     }
+
+    //订单促销
+    public function prom_order_list(){
+        echo '订单促销';
+    }
 }

@@ -158,4 +158,21 @@ class Goods extends Base
         };
     }
 
+    //商品属性
+    public function goods_attribute_list(){
+        echo '商品属性';
+    }
+    //商品分类
+    public function category_list(){
+        echo '商品分类';
+    }
+    //关联商品
+    public function goods_relate(){
+        echo '关联商品';
+    }
+    //商品统计
+    public function goods_count(){
+
+    }
+
 }

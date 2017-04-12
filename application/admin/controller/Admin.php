@@ -150,8 +150,8 @@ class Admin extends Base
             $condition['user_name'] = input('username/s');
             $condition['password'] = input('password/s');
             if(!empty($condition['user_name']) && !empty($condition['password'])){
-                //密码先不加密
-               // $condition['password'] = md5('shop'.$condition['password']);
+                //加密
+                $condition['password'] = encrypt($condition['password']);
                 $admin_info = Db::name('admin')->join(PREFIX.'admin_role', PREFIX.'admin.role_id='.PREFIX.'admin_role.role_id','INNER')->where($condition)->find();
                 if(is_array($admin_info)){
                     session('admin_id',$admin_info['admin_id']);
@@ -197,11 +197,11 @@ class Admin extends Base
         $Verify = new Verify($config);
         $Verify->entry("admin_login");
     }
-
+    //角色管理
     public function role(){
-        $list = Db::name('admin_role')->order('role_id desc')->select();
+        /*$list = Db::name('admin_role')->order('role_id desc')->select();
         $this->assign('list',$list);
-        return $this->fetch();
+        return $this->fetch();*/
     }
 
     public function role_info(){
@@ -260,9 +260,9 @@ class Admin extends Base
             }
         }
     }
-
+    //管理员日志
     public function log(){
-        $p = input('p/d',1);
+        /*$p = input('p/d',1);
         $logs = DB::name('admin_log')->alias('l')->join('__ADMIN__ a','a.admin_id =l.admin_id')->order('log_time DESC')->page($p.',20')->select();
         $this->assign('list',$logs);
         $count = DB::name('admin_log')->where('1=1')->count();
@@ -270,7 +270,7 @@ class Admin extends Base
         $show = $Page->render();
         $this->assign('pager',$Page);
         $this->assign('page',$show);
-        return $this->fetch();
+        return $this->fetch();*/
     }
 
 
@@ -357,6 +357,11 @@ class Admin extends Base
         } else {
             $this->error("操作失败", url('Admin/Admin/supplier'));
         }
+    }
+
+    //管理员列表
+    public function admin_list(){
+
     }
 
 }

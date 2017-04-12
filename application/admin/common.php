@@ -6,7 +6,7 @@
  * Time: 17:33
  */
 use think\Db;
-
+use App\Admin\Model\Access;
 /**
  * 管理员操作记录
  * @param $log_info
@@ -50,90 +50,37 @@ function format_bytes($size, $delimiter = '') {
     return round($size, 2) . $delimiter . $units[$i];
 }
 
-/**
- * 根据id获取区域名称
- * @param $regionId
- * @return mixed
- */
-function getRegionName($regionId){
-    $data = Db::name('region')->where(array('id'=>$regionId))->field('name')->find();
-    return $data['name'];
-}
 
-/**
- * @param $act_list
- * @return mixed
- */
-function getMenuList($act_list){
-    //根据角色权限过滤菜单
-    $menu_list = getAllMenu();
-    if($act_list != 'all'){
-        $right = Db::name('system_menu')->where("id", "in", $act_list)->cache(true)->column('right',true);
-        foreach ($right as $val){
-            $role_right .= $val.',';
-        }
-        $role_right = explode(',', $role_right);
-        foreach($menu_list as $k=>$mrr){
-            foreach ($mrr['sub_menu'] as $j=>$v){
-                if(!in_array($v['control'].'Controller@'.$v['act'], $role_right)){
-                    unset($menu_list[$k]['sub_menu'][$j]);//过滤菜单
-                }
+//获取所有菜单
+function getAllMenu(){
+    $menu = Db::name('Access');
+    //获取最大组值
+    $max_group = $menu->max('menu_group');
+
+    //获取各个分组
+    $menu_list=array();
+    for ($i=1;$i<=$max_group;$i++){
+        $menu_group = $menu->where('menu_group',$i)->select();
+        $childMenus=array();
+        foreach ($menu_group as $v1){
+            if($v1['id']==$i){
+                unset($v1);
+            }else{//获取子节点
+                $childMenusOne=[
+                    "id"=>$v1['id'],"name"=>$v1['name'],"parentId"=>$v1['pid'],"url"=>"__ADMIN__/".$v1['module'].'/'.$v1['action'], "icon"=>"","order"=>"1","isHeader"=>$v1['isHeader'],"childMenus"=>""
+                ];
+                array_push($childMenus,$childMenusOne);
             }
         }
+        //获取父节点 id就是$i;
+        $pid_menu=$menu->find($i);
+        $one=[
+            "id"=>$pid_menu['id'],"name"=>$pid_menu['name'],"parentId"=>$pid_menu['pid'],"url"=>"","icon"=>"","order"=>"1","isHeader"=>$pid_menu['isHeader'],"childMenus"=>$childMenus
+        ];
+
+        array_push($menu_list,$one);
     }
-    return $menu_list;
-}
-
-function getAllMenu(){
-    return	array(
-        'order' => array('name' => '订单管理', 'icon'=>'fa-money', 'sub_menu' => array(
-            array('name' => '订单列表', 'act'=>'index', 'control'=>'Order'),
-            array('name' => '订单导出', 'act'=>'export_order', 'control'=>'Order'),
-            array('name' => '订单发货', 'act'=>'send_order', 'control'=>'Order'),
-        )),
-        'goods' => array('name' => '商品管理', 'icon'=>'fa-book', 'sub_menu' => array(
-            array('name' => '添加商品', 'act'=>'good_Info', 'control'=>'Goods'),
-            array('name' => '商品列表', 'act'=>'good_list', 'control'=>'Goods'),
-            array('name' => '商品属性', 'act'=>'goods_attribute_list', 'control'=>'Goods'),
-            array('name' => '关联商品','act'=>'goods_relate','control'=>'Comment'),
-            array('name' => '商品分类', 'act'=>'category_list', 'control'=>'Goods'),
-            array('name' => '商品评价','act'=>'index','control'=>'Comment'),
-        )),
-        'promotion' => array('name' => '促销管理', 'icon'=>'fa-bell', 'sub_menu' => array(
-            array('name' => '抢购管理', 'act'=>'flash_sale', 'control'=>'Promotion'),
-            array('name' => '团购管理', 'act'=>'group_buy_list', 'control'=>'Promotion'),
-            array('name' => '商品促销', 'act'=>'prom_goods_list', 'control'=>'Promotion'),
-            array('name' => '订单促销', 'act'=>'prom_order_list', 'control'=>'Promotion'),
-            array('name' => '代金券管理','act'=>'index', 'control'=>'Coupon'),
-        )),
-        'article' => array('name' => '文章管理', 'icon'=>'fa-comments', 'sub_menu' => array(
-            array('name' => '文章列表', 'act'=>'article_List', 'control'=>'Article'),
-            array('name' => '文章分类', 'act'=>'category_list', 'control'=>'Article'),
-        )),
-        'operation' => array('name' => '运营管理', 'icon'=>'fa-cubes', 'sub_menu' => array(
-            array('name' => '渠道管理', 'act'=>'channel', 'control'=>'Operation'),
-            array('name' => '渠道统计', 'act'=>'channel_statistics', 'control'=>'Operation'),
-            array('name' => '订单统计', 'act'=>'order_count', 'control'=>'Order'),
-            array('name' => '商品统计', 'act'=>'goods_count', 'control'=>'Goods'),
-            array('name' => '专题管理', 'act'=>'project_control', 'control'=>'Operation'),
-        )),
-        'system' => array('name'=>'系统功能','icon'=>'fa-cog','sub_menu'=>array(
-            array('name'=>'网站设置','act'=>'index','control'=>'System'),
-            array('name'=>'友情链接','act'=>'link_list','control'=>'Article'),
-            array('name'=>'推荐位','act'=>'recommended_area','control'=>'System'),
-            array('name'=>'普通文章','act'=>'index','control'=>'Article'),
-            array('name'=>'短信账号','act'=>'index','control'=>'SmsTemplate'),
-            array('name'=>'发送记录','act'=>'send_log','control'=>'SmsTemplate'),
-
-        )),
-        'access' => array('name' => '权限管理', 'icon'=>'fa-gears', 'sub_menu' => array(
-            array('name'=>'权限列表','act'=>'right_list','control'=>'System'),
-            array('name' => '管理员列表', 'act'=>'admin_list', 'control'=>'Admin'),
-            array('name' => '角色管理', 'act'=>'role', 'control'=>'Admin'),
-            array('name' => '用户组', 'act'=>'index', 'control'=>'Member'),
-            array('name' => '管理员日志', 'act'=>'log', 'control'=>'Admin'),
-        )),
-    );
+    return json_encode($menu_list,JSON_UNESCAPED_UNICODE);
 }
 function getMenuArr(){
     $menuArr = include APP_PATH.'admin/conf/menu.php';
