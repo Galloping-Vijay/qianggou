@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>商品列表</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link href="__PUBLIC__/css/flash_sale.css" rel="stylesheet" type="text/css" />
+    <style>
+        body{background-color:#f83b37 }
+        .content-info{position: relative;background-color: #faecbf;width: 90%;height: 120px;margin: 10px auto;border-radius: 10px}
+        .content-info img{margin: 10px 10px;width: 120px;height: 100px}
+        .content-title{position: absolute;top: 10px;left: 140px;right: 10px;padding: 5px 5px;text-indent: 15px;height: 60px;overflow:hidden; text-overflow:ellipsis; color: brown;}
+        .content-price{color:#ff6d3e;position: absolute;top: 90px;left: 140px;}
+        .content-span{text-decoration: line-through;    font-size: 12px;}
+        .content-info a{border: 2px solid #6aa7c7;background-color: #29b3fc;position: absolute;top: 85px;left: 255px;height: 26px;line-height: 26px;color: #fff;border-radius: 5px;display: block;font-size: 16px;text-align: center;padding: 2px;}
+        .pagination{list-style-type: none;
+            display: inline-flex;
+            float: right;
+            margin-right: 25px;
+        }}
+    </style>
+</head>
+
+<body>
+<div class="slide" id="slide3">
+    <ul>
+        <li>
+            <a href="//m.yhd.com/">
+                <img src="http://d10.yihaodianimg.com/V00/M03/4D/41/CgQDsVQG4d6AISZPAAFa7N3KyPY18100.jpg" alt="">
+                <p>石锅鱼</p>
+            </a>
+        </li>
+        <li>
+            <a href="//www.baidu.com/">
+                <img src="http://d10.yihaodianimg.com/V00/M04/32/59/CgQDsVQDEtaAVv4BAAEFc6n3fws75000.jpg" alt="">
+                <p>石锅鱼2</p>
+            </a>
+        </li>
+        <li>
+            <a href="//m.taobao.com/">
+                <img src="http://d11.yihaodianimg.com/N05/M04/82/EC/CgQI01QEHoiAFBbgAAC9du5zOPc62900.jpg" alt="">
+                <p>石锅鱼3</p>
+            </a>
+        </li>
+        <li>
+            <a href="//www.qq.com/">
+                <img src="http://d10.yihaodianimg.com/N07/M09/26/8B/CgQI0FQFd8-ACrb7AADBtSan3a084000.jpg" alt="">
+                <p>石锅鱼4</p>
+            </a>
+        </li>
+    </ul>
+    <div class="dot">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+<div class="content">
+    <foreach $list as $vo >
+        <div class="content-info">
+            <img src="{$vo.goods.img}" alt="图片">
+            <div class="content-title">
+                {$vo.title}
+            </div>
+            <div class="content-price">¥{$vo.price}
+                (<span class="content-span">¥{$vo.goods.market_price}</span>)
+            </div>
+            <a href="{:url('flash_sale_info',array('goods_id'=>$vo.goods_id))}">马 上 抢</a>
+        </div>
+    </foreach>
+    {$list->render()}
+</div>
+<script src="__PUBLIC__/js/zepto.min.js"></script>
+<script src="__PUBLIC__/js/swipeSlide.min.js"></script>
+<script>
+    $(function() {
+        $('#slide3').swipeSlide({
+            continuousScroll: true,
+            speed: 3000,
+            transitionType: 'cubic-bezier(0.22, 0.69, 0.72, 0.88)',
+            callback: function(i) {
+                $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

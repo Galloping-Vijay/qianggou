@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>编辑抢购</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+    <!--百度编辑器-->
+    <link href="__PUBLIC__/umeditor/themes/default/css/umeditor.min.css" type="text/css" rel="stylesheet">
+    <script src="__PUBLIC__/umeditor/third-party/template.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/umeditor/umeditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/umeditor/umeditor.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/umeditor/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        #PROCUCT-GROUP-GOODS-ADD{width: 180px; height: 290px; border:1px solid #F7B824; float: left; margin: 0 10px 10px 0; background: white; position: relative}
+        #PROCUCT-GROUP-GOODS-ADD button{position: absolute; top: 50%; left: 50%; margin: -16% 0 0 -31%;}
+        .product-group-goods-list{width: 180px; height: 290px; border:1px solid #F7B824; float: left; margin: 0 10px 10px 0; background: white; position: relative}
+        .product-group-goods-list img{width:180px; height: 180px;}
+        .product-group-goods-list p{padding:5px; font-size: 16px; height: 35px; line-height: 1.3em; overflow: hidden;}
+        .product-group-goods-list strong{font-size: 16px; color:#FF5722;}
+        .product-group-goods-list del{color:#c2c2c2; margin-left: 5px;}
+        .product-group-goods-list dd{text-align: center;padding-top: 5px;}
+        .ncap-btn{
+            font: normal 12px/20px "microsoft yahei";
+            text-decoration: none;
+            color: #777;
+            background-color: #F5F5F5;
+            text-align: center;
+            vertical-align: middle;
+            display: inline-block;
+            height: 20px;
+            padding: 2px 9px;
+            border: solid 1px;
+            border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-tab layui-tab-brief" >
+    <ul class="layui-tab-title">
+        <li class="layui-this"><a class="layui-block" href="javascript:;">编辑抢购</a></li>
+        <li><a class="layui-block" href="product-list.html">返回抢购列表</a></li>
+    </ul>
+</div>
+<form id="form" method="post"  class="layui-form">
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table" lay-skin="line">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="85%">
+                    </colgroup>
+
+                    <input type="hidden" id="goods_id" name="goods_id" value="{$info.goods_id}">
+                    <input type="hidden" name="id" value="{$info.id}">
+                    <tbody>
+                    <tr>
+                        <td align="right"><strong>抢购标题：</strong></td>
+                        <td class="layui-form-item">
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <input size="50" type="text" placeholder="抢购标题" autocomplete="off" class="layui-input" name="title" value="{$info.title}">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>选择抢购商品：</strong></td>
+                        <td class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <input type="text" placeholder="选择抢购商品" autocomplete="off" class="layui-input" name="goods_name" id="goods_name"  value="{$info.goods_name}">
+                                <span class="err"></span>
+                                <p class="notic">
+                                    <a onclick="selectGoods()" class="ncap-btn"><i class="layui-icon" style="font-size: 14px;vertical-align: baseline;margin-right: 4px;">&#xe615;</i>选择商品</a>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>限时抢购价格：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="0.00" autocomplete="off" class="layui-input" name="price" id="price"  value="{$info.price}"  onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>参加抢购数量：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="参加抢购数量" autocomplete="off" class="layui-input" name="goods_num" id="goods_num" value="{$info.goods_num}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>限购数量：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="1"  class="layui-input" id="buy_limit" name="buy_limit" value="{$info.buy_limit}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>开始时间：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input class="layui-input" placeholder="开始日期" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value="{$info.start_time}" name="start_time" id="start_time"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>结束时间：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input class="layui-input" placeholder="结束日期" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value="{$info.end_time}" name="end_time" id="end_time"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>上下架：</strong></td>
+                        <td class="layui-form-item"> <div class="layui-input-inline" id="is_end">
+                            <input type="radio" name="is_end" value="0" title="上架" checked>
+                            <input type="radio" name="is_end" value="1" title="下架">
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>抢购介绍：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline">
+                            <textarea  placeholder="请输入内容" class="layui-textarea" style="width: 500px;" name="description" id="description">{$info.description}</textarea>
+                        </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <table class="layui-table" lay-skin="nob">
+        <colgroup>
+            <col width="15%">
+            <col width="85%">
+        </colgroup>
+        <tbody>
+        <tr class="action-bar">
+            <td align="right"></td>
+            <td class="layui-form-item"><button type="submit" class="layui-btn layui-btn-normal layui-btn-big" onclick="adsubmit()">确 定</button></td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+
+<script type="text/javascript">
+    //layui
+    layui.use(['layer', 'element', 'form', 'laydate'], function(){
+        var layer = layui.layer;
+        var form = layui.form();
+
+        //监听属性选择
+        form.on('select(product-attribute-selected)', function(data){
+            if(data.value == ''){
+                $("#PRODUCT-ATTRUBUTE-BOX tbody").html('<tr><td colspan="2" align="center">请选择您需要的属性组</td></tr>');
+            }else{
+                layer.msg('填充数据');
+            }
+            console.log(data.elem); //得到select原始DOM对象
+            console.log(data.value); //得到被选中的值
+        });
+
+    });
+
+    function adsubmit(){
+        if($('#title').val() ==''){
+            layer.msg('抢购标题不能为空');return;
+        }
+        if($('#price').val() ==''){
+            layer.msg('抢购价格不能为空');return;
+        }
+        if($('#goods_num').val() ==''){
+            layer.msg('参加抢购数量不能为空');return;
+        }
+        if($('#buy_limit').val() ==''){
+            layer.msg('限购数量不能为空');return;
+        }
+        $('#form').submit();
+    }
+
+    function selectGoods(){
+        var url = "{:url('Promotion/search_goods',array('tpl'=>'select_goods'))}";
+        layer.open({
+            type: 2,
+            title: '选择商品',
+            shadeClose: true,
+            shade: 0.2,
+            area: ['75%', '75%'],
+            content: url,
+        });
+    }
+    function call_back(goods_id,goods_name,store_count,price){
+        $('#goods_id').val(goods_id);
+        $('#goods_name').val(goods_name);
+        $('#goods_num').val(store_count);
+        $('#price').val(price);
+        layer.closeAll('iframe');
+    }
+</script>
+</body>
+</html>

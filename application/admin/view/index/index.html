@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>电商后台管理系统</title>
+	
+	<link rel="stylesheet" href="__PUBLIC__/css/baiwapak.css">
+    
+  </head>
+  
+  <body>
+	<div class="layout-admin">
+		<header class="layout-header">
+			<span class="header-logo">电商后台管理系统</span>
+			<a class="header-menu-btn" href="javascript:;"><i class="icon-font">&#xe600;</i> ssss</a>
+			<ul class="header-bar"  id="HEADER-MENU">
+				<li class="header-bar-role">
+					<a class="layui-header-menu" href="" data-index="header-panel"><i class="icon-font" style="margin-left:5px;">&#xe601;</i> <span>我的面板</span></a>
+				</li>
+				<li class="header-bar-nav">
+					<a>{$admin_info.user_name}<i class="icon-font" style="margin-left:5px;">&#xe60c;</i></a>
+					<ul class="header-dropdown-menu right">
+						<li><a class="layui-header-menu" href=""
+							   onclick="alert('请联系超级管理员')" data-index="header-profile"><span>修改密码</span></a></li>
+						<li><a href="../admin/logout" target="_parent">退出</a></li>
+					</ul>
+				</li>
+				
+			</ul>
+		</header>
+		<aside class="layout-side">
+			<ul class="side-menu">
+			  
+			</ul>
+		</aside>
+		
+		<div class="layout-side-arrow"><div class="layout-side-arrow-icon"><i class="icon-font">&#xe60d;</i></div></div>
+		
+		<section class="layout-main">
+			<div class="layout-main-tab">
+				<button class="tab-btn btn-left"><i class="icon-font">&#xe60e;</i></button>
+                <nav class="tab-nav">
+                    <div class="tab-nav-content">
+                        <a href="javascript:;" class="content-tab active" data-id="index.html" data-index="header-panel">我的面板 <i class="icon-font"></i></a>
+                    </div>
+                </nav>
+                <button class="tab-btn btn-right"><i class="icon-font">&#xe60f;</i></button>
+			</div>
+			<div class="layout-main-body">
+				<iframe class="body-iframe" name="iframeheader-panel" width="100%" height="99%" src="/home.html" frameborder="0" data-id="/home.html" data-index="0" seamless></iframe>
+			</div>
+		</section>
+	</div>
+	<script type="text/javascript" src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/js/baiwapak.js"></script>
+	<link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+	<script src="__PUBLIC__/layui/layui.js"></script>
+	<script type="text/javascript" >
+		layui.use(['layer', 'element', 'form', 'laydate'], function(){
+			var layer = layui.layer;
+			layer.open({
+				title: '及时提醒'
+				,offset: 'rb'
+				,content: '您有新的订单，请注意处理'
+			});
+		});
+
+		/*
+		  初始化加载
+		*/
+		$(function(){
+			/*菜单json*/
+			var menu = [
+						/*{"id":"2","name":"框架案例","parentId":"0","url":"home.html","icon":"","order":"2","isHeader":"1","childMenus":[
+							{"id":"9","name":"新功能","parentId":"2","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+							{"id":"10","name":"多级","parentId":"2","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":[
+								{"id":"11","name":"一级","parentId":"10","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+								{"id":"12","name":"一级","parentId":"10","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":[
+									{"id":"13","name":"二级","parentId":"12","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+									{"id":"14","name":"二级","parentId":"12","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":[
+										{"id":"15","name":"三级","parentId":"14","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+										{"id":"16","name":"三级","parentId":"14","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":[
+											{"id":"17","name":"四级","parentId":"16","url":"home.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+											{"id":"18","name":"四级","parentId":"16","url":"home1.html","icon":"","order":"1","isHeader":"0","childMenus":""}
+										]}
+									]}
+								]}
+							]}
+						]},*/
+
+				{"id":"100","name":"订单管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"101","name":"订单列表","parentId":"100","url":"../Order/index","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"102","name":"订单导出","parentId":"100","url":"../Order/export_order","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"103","name":"订单发货","parentId":"100","url":"../Order/send_order","icon":"","order":"1","isHeader":"0","childMenus":""},
+				]},
+				{"id":"200","name":"商品管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"201","name":"添加商品","parentId":"200","url":"../Goods/good_info","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"202","name":"商品列表","parentId":"200","url":"../Goods/good_list","icon":"","order":"1","isHeader":"0","childMenus":""},
+					/*{"id":"203","name":"商品属性","parentId":"200","url":"Admin/Goods/good_list","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"204","name":"关联商品","parentId":"200","url":"product-relevance.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"205","name":"商品分类","parentId":"200","url":"product-cate-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"206","name":"商品评价","parentId":"200","url":"comment-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},*/
+				]},
+                {"id":"210","name":"促销管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+                    /*{"id":"211","name":"活动列表","parentId":"210","url":"Admin/promotion/index.html","icon":"","order":"1","isHeader":"0","childMenus":""},*/
+                    {"id":"212","name":"抢购管理","parentId":"210","url":"../promotion/flash_sale.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+                   /* {"id":"213","name":"团购管理","parentId":"210","url":"Admin/promotion/group_buy_list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+                    {"id":"214","name":"优惠促销","parentId":"210","url":"Admin/promotion/prom_goods_list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+                    {"id":"215","name":"优 惠 券","parentId":"210","url":"Admin/promotion/coupons.html","icon":"","order":"1","isHeader":"0","childMenus":""},*/
+                ]},
+				/*{"id":"300","name":"文章管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"301","name":"文章列表","parentId":"300","url":"article-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"303","name":"文章分类","parentId":"300","url":"article-cate-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+				]},
+				{"id":"400","name":"运营管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"401","name":"渠道管理","parentId":"400","url":"channel-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"402","name":"渠道统计","parentId":"400","url":"channel-count.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"403","name":"订单统计","parentId":"400","url":"order-count.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"404","name":"商品统计","parentId":"400","url":"goods-count.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"405","name":"专题管理","parentId":"400","url":"article-topic-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+				]},*/
+				/*{"id":"500","name":"系统功能","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"501","name":"网站管理","parentId":"500","url":"webconfig.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"502","name":"友情链接","parentId":"500","url":"friendlinks-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"503","name":"推荐位","parentId":"500","url":"recommended-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"504","name":"普通文章","parentId":"500","url":"article-base-list.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"505","name":"短信账号","parentId":"500","url":"sms.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"506","name":"发送记录","parentId":"500","url":"sms.html","icon":"","order":"1","isHeader":"0","childMenus":""},
+				]},*/
+				{"id":"600","name":"权限管理","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
+					{"id":"601","name":"管理员","parentId":"600","url":"../Admin/index","icon":"","order":"1","isHeader":"0","childMenus":""},
+					{"id":"602","name":"用户组","parentId":"600","url":"../Member/index","icon":"","order":"1","isHeader":"0","childMenus":""},
+				]}
+						];
+			initMenu(menu,$(".side-menu"));
+			$(".side-menu > li").addClass("menu-item");
+
+			$(document.body).on("click", ".menu-header", function(){
+				var id = $(this).data("id");
+				$(".menu-item:not(.menu-header)").not(":animated").slideUp(200);
+				$(".item-parent-"+id).not(":animated").slideToggle(200);
+			});
+		});
+
+
+	</script>
+  </body>
+</html>

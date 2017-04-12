@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>抢购管理</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+    <style>
+        .button_ture{margin-left: 15px;}
+    </style>
+</head>
+<body>
+<table class="layui-table" lay-skin="nob">
+    <tbody>
+    <tr>
+        <td>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-mid">商品名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" placeholder="商品名称" autocomplete="off" class="layui-input">
+                    </div>
+                    <label class="layui-form-mid">商品编号：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" placeholder="商品编号" autocomplete="off" class="layui-input">
+                    </div>
+                    <button class="layui-btn layui-btn-normal button_ture">搜索商品</button>
+                </div>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>商品名称</th>
+            <th>本店格</th>
+            <th>成本价</th>
+            <th>库存</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="goodsList" item="vo">
+            <tr>
+                <td onclick="changeGoods(this)" data-id="{$vo.goods_id}" data-price="{$vo.shop_price}" data-name="{$vo.goods_name}" data-count="{$vo.store_count}" >
+                    <input type="radio" name="goods_id" value="{$vo.goods_id}" title="{$vo.goods_id}" >
+                </td>
+                <td>{$vo.goods_name}</td>
+                <td>￥{$vo.shop_price}</td>
+                <td>￥{$vo.cost_price}</td>
+                <td>{$vo.store_count}</td>
+            </tr>
+        </foreach>
+
+        </tbody>
+    </table>
+</form>
+<style>
+    .pagination{display: inline-flex;}
+</style>
+<div class="layui-box">
+    <div class="layui-laypage layui-laypage-molv" style="float: right; display: inherit"><a style="border: none;">共{$count}条记录</a>
+        {$page}
+    </div>
+    <div style="float: left;">
+        <button class="layui-btn layui-btn-normal button_ture" onclick="select_goods();">确定</button>
+    </div>
+</div>
+
+<script>
+    layui.use(['layer', 'element', 'form'], function(){
+        var layer = layui.layer;
+        var element = layui.element();
+        var form = layui.form();
+    });
+
+    var goods_id = 0 , goods_name = '' , store_count = '',price;
+    function changeGoods(obj){
+        goods_id = $(obj).attr('data-id');
+        goods_name = $(obj).attr('data-name');
+        store_count = $(obj).attr('data-count');
+        price = $(obj).attr('data-price');
+        //alert(goods_id);
+        //console.log(goods_id);
+    }
+
+    function select_goods()
+    {
+        if($("input[type='radio']:checked").length == 0)
+        {
+            layer.alert('请选择商品', {icon: 2}); //alert('请选择商品');
+            return false;
+        }
+        window.parent.call_back(goods_id,goods_name,store_count,price);
+    }
+</script>
+</body>
+</html>

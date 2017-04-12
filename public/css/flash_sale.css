@@ -1,0 +1,92 @@
+article,aside,dialog,footer,header,section,footer,nav,figure,menu{display:block}
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, figure, section, legend, textarea, p, blockquote, th, td, input, select, textarea, button { margin: 0; padding: 0 }
+body{ font:14px/1.5; font-family:"Microsoft Yahei",Arial,Helvetica,sans-serif;background-color: #f5f5f5;color:#808080;max-width: 640px;min-height:320px;margin: 0 auto}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight: normal;}
+table{border-collapse:collapse;border-spacing:0}
+ul,ol,dd,dt,dl{list-style-type:none;}
+a{color:#3f3f3f;text-decoration: none;-webkit-touch-callout: none;-webkit-user-select: none;}
+a,input,select{-webkit-tap-highlight-color: transparent;-webkit-appearance: none;-webkit-border-radius: 0;}
+input,img{border:none;}
+i,em{font-style:normal;}
+
+.fl{ float: left; }
+.fr{ float: right; }
+.orange{ color: #ff6e3e; }
+/*轮播图*/
+.slide { position: relative; max-width: 640px; overflow: hidden; margin: 0 auto; }
+.slide:after { content: ''; display: block; width: 100%; padding-top: 50%; }
+.slide ul { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.slide li { list-style: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+/* 解决js阻塞页面显示首屏 */
+.slide li:first-child { z-index: 1; }
+.slide li img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; }
+.slide li p { height: 25px; line-height: 25px; width: 100%; background-color: rgba(0,0,0,.5); color: #fff; position: absolute; bottom: 0; left: 0; padding: 0 10px; box-sizing: border-box; }
+.slide .dot { position: absolute; right: 10px; bottom: 10px; z-index: 5; font-size: 0; }
+.slide .dot span { display: inline-block; width: 5px; height: 5px; margin-left: 5px; border: 1px solid #fff; border-radius: 50%; }
+.slide .dot .cur { background-color: #fff; }
+
+.product_info{ overflow: hidden; background-color: #fff; padding: 10px;}
+.pi_left{ width:70%;}
+.pi_left span{ display: inline-block;  margin-right: 5px;}
+.pi_left .price{ color: #ff6d3e;}
+.pi_left .price em{ font-size:22px; }
+.pi_left .vip{ border-radius: 3px; border:1px solid #ff6d3e; height: 27px; line-height: 27px; padding: 0 5px;color: #ff6d3e; }
+.pi_left .original_price{ text-decoration: line-through; margin: 5px 0; color: #b2b2b2  }
+.pi_right{ width: 30% }
+.pi_right a{height: 50px; line-height: 50px;  color: #fff;border-radius: 5px; display: block; font-size: 16px; text-align: center;}
+.pi_right .gray_btn{  background-color: #999; }
+.pi_right .orange_btn{ background-color: #ff6e3e; }
+.pi_right p{ text-align: right; margin-top: 10px; }
+
+.notice_list{ overflow: hidden; padding: 10px; background-color: #f9f9f9; }
+.notice_list li{ width: 33.33%; float: left; height: 25px; line-height: 25px; overflow: hidden; background: url(../images/home/icon.jpg) no-repeat; background-size: 25px auto; padding-left: 30px; margin-bottom: 5px; box-sizing: border-box; font-size: 13px;}
+.notice_list li.icon01{ background-position: 0 0 }
+.notice_list li.icon02{ background-position: 0 -25px; }
+.notice_list li.icon03{ background-position: 0 -50px; }
+.notice_list li.icon04{ background-position: 0 -75px; }
+.notice_list li.icon05{ background-position: 0 -100px; }
+
+.open_vip{ background-color: #fff; height:50px; line-height: 50px; margin: 5px 0; overflow: hidden; display: block; position: relative; padding-left: 25px;  }
+.open_vip em{ color: #ff6d3e;}
+.open_vip:before{ background: url(../images/home/icon_nz.png) no-repeat left center; content: ''; position: absolute; left: 5px;top: 50%;
+    transform: translateY(-50%);  width: 16px; height: 16px; background-size: 100% 100%;}
+.open_vip .oi_right{ position: absolute;right: 5px; top:0; background:url(../images/home/icon_arrow.png) no-repeat right center; background-size: 20px auto; display: block; padding-right: 20px; color: #ff6d3e }
+
+.buying_process{ overflow: hidden;background-color: #fff; padding: 20px 0 }
+.buying_process .bp{ float: left; width: 25%; text-align: center; }
+.buying_process .bp span{ display: block; background: url(../images/home/icon2.jpg) no-repeat; width: 43px; height: 43px; background-size: 43px auto; margin: 0 auto; overflow: hidden; }
+.buying_process .bp:nth-of-type(1) span{ background-position: 0 0 }
+.buying_process .bp:nth-of-type(2) span{ background-position: 0 -43px }
+.buying_process .bp:nth-of-type(3) span{ background-position: 0 -86px }
+.buying_process .bp p{ margin-top: 5px; font-size: 13px; }
+.buying_process .arrow{ display: block; float: left;width: 10%; font-size: 19px; font-weight: 700; margin-top: 10px; }
+
+.det_contact{ overflow: hidden; background-color: #fff; margin-top: 5px; }
+.dc_content{ overflow: hidden; position: relative; padding:0 10px; margin: 10px 0 }
+.dc_content a{ display: block; }
+.dc_content_info{overflow: hidden;white-space: nowrap;text-overflow: ellipsis; width: 80%; }
+.dc_content .icon_tel{ background:url(../images/home/icon_tel.png) no-repeat center center; background-size: 32px 32px; position: absolute;right: 0; top:0; width: 20%; height: 100%; border-left:1px solid #f2f2f2;}
+
+/*商家详情模块*/
+.box_detail{ overflow: hidden; background-color: #fff; margin: 5px 0; line-height: 30px; }
+.public_title{ height:40px; line-height: 40px; border-bottom: 1px solid #f2f2f2; padding: 0 10px;  }
+.bd_time{ overflow: hidden; padding: 5px;}
+.bd_time .b_line{ border-bottom: 1px solid #ff6e3e }
+.bd_product_title{ padding: 0 5px; }
+.bd_content{ overflow: hidden; padding: 5px; }
+.bd_content img{ display: block; max-width: 100%; margin: 0 auto; }
+/*二维码*/
+.erweima{ overflow: hidden; background-color: #fff; padding: 10px; }
+.erweima img{ display: block; width: 150px; height: 150px; margin: 0  auto; }
+.erweima p{ color: #000; font-weight: 700; font-size: 24px; margin: 10px 0 ; text-align: center;}
+
+.qg_success{ overflow: hidden; background-color: #fff; margin: 5px 0; padding-bottom: 30px; }
+.qg_success_ui{ overflow: hidden; }
+.qg_success_ui li{ height: 60px; line-height: 60px; overflow: hidden; border-bottom: 1px solid #f2f2f2; position: relative;  }
+.qg_success_ui li span{ display: inline-block; }
+.qg_success_ui li .pic{ width: 53px; height: 53px; overflow: hidden; position: absolute; left: 5px; top:5px; }
+.qg_success_ui li .pic img{ display: block; width: 100%; border-radius: 50%; }
+.qg_success_ui li .user{ padding-left: 65px; }
+.qg_success_ui li .user em{ background-color: #ff6d3e;border-radius: 2px; color: #fff; height:26px; line-height: 26px; padding: 0 3px; margin-left: 3px;  }
+.qg_success_ui li .time{ position: absolute; right: 5px; font-size: 13px; }
+

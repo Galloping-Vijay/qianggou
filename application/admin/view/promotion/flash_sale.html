@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>抢购管理</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<table class="layui-table" lay-skin="nob">
+    <tbody>
+    <tr>
+        <td>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-mid">活动名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" placeholder="商品名称" autocomplete="off" class="layui-input">
+                    </div>
+                    <label class="layui-form-mid">商品名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" placeholder="商品编号" autocomplete="off" class="layui-input">
+                    </div>
+                    <label class="layui-form-mid">是否上架：</label>
+                    <div class="layui-input-inline">
+                        <select lay-verify="">
+                            <option value="">是否上架</option>
+                            <option value="">不选择</option>
+                            <option value="010">是</option>
+                            <option value="021">否</option>
+                        </select>
+                    </div>
+                    <button class="layui-btn layui-btn-normal">确 定</button>
+                    <a href="flash_sale_info.html" class="layui-btn layui-btn-green"><i class="layui-icon">&#xe608;</i> 新增抢购 </a>
+                </div>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th><input type="checkbox" title="ID" lay-filter="selected-all"> </th>
+            <th>活动名称</th>
+            <th>商品名称</th>
+            <th>抢购价格</th>
+            <th>抢购数量</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>已购买</th>
+            <th>操  作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="list" item="vo">
+            <tr id="flash_sale-id-{$vo.id}">
+                <td><input class="row-id" type="checkbox" title="{$vo.id}"> </td>
+                <td>
+                    {$vo.title}
+                </td>
+                <td>{$vo.goods_name}</td>
+                <td>￥{$vo.price}</td>
+                <td>{$vo.goods_num}</td>
+                <td>{$vo.start_time|date='Y-m-d',###}</td>
+                <td>{$vo.end_time|date='Y-m-d',###}</td>
+                <td>{$vo.buy_num}</td>
+                <td><a href="{:url('Promotion/flash_sale_info',array('id'=>$vo['id']))}" class="layui-btn layui-btn-small layui-btn-primary" title="编辑">
+                    <i class="layui-icon">&#xe614;</i>
+                </a>
+                    <a href="javascript:;" class="layui-btn layui-btn-small layui-btn-primary flash_sale_del" title="删除" data-id="{$vo.id}">
+                        <i class="layui-icon">&#x1006;</i>
+                    </a></td>
+            </tr>
+        </foreach>
+
+        </tbody>
+    </table>
+</form>
+<style>
+    .pagination{display: inline-flex;}
+</style>
+<div class="layui-box">
+    <div class="layui-laypage layui-laypage-molv" style="float: right; display: inherit"><a style="border: none;">共{$count}条记录</a>
+        {$page}
+    </div>
+    <div style="float: left;">
+        <button class="layui-btn layui-btn-danger">批量下架</button>
+        <button class="layui-btn layui-btn-primary" onclick="editInfo('relative')">关联商品组</button>
+    </div>
+</div>
+
+<div class="layui-hide" id="edit-relative">
+    <form class="layui-form" style="padding: 0 10px;">
+        <table class="layui-table" lay-skin="nob">
+            <colgroup>
+                <col width="30%">
+                <col width="70%">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td align="right"><strong>关联商品组：</strong></td>
+                <td class="layui-form-item"><div class="layui-input-inline"><select lay-verify="">
+                    <option value="">关联商品组</option>
+                    <option value="">不选择</option>
+                    <option value="1">十二生肖组</option>
+                    <option value="2">本命佛组</option>
+                </select></div></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right"><button class="layui-btn layui-btn-normal layui-btn-big">确 定</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<script>
+    layui.use(['layer', 'element', 'form'], function(){
+        var layer = layui.layer;
+        var element = layui.element();
+        var form = layui.form();
+
+        //选中
+        form.on('checkbox(selected-all)', function(data){
+            console.log(data.elem); //得到checkbox原始DOM对象
+            console.log(data.elem.checked); //是否被选中，true或者false
+            console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+
+            $(".row-id").attr("checked", data.elem.checked);
+            data.elem.checked == true ? $(".row-id").next("div").addClass("layui-form-checked") : $(".row-id").next("div").removeClass("layui-form-checked");
+        });
+
+        //修改状态
+        form.on('switch(product-status)', function(data){
+            alert("监控到了");
+            console.log(data.elem); //得到checkbox原始DOM对象
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            console.log(data.value); //开关value值，也可以通过data.elem.value得到
+        });
+    });
+
+    function editInfo(action){
+        var html = '';
+        var openArea = ['420px', '200px'];
+        var openTitle = '编辑';
+        if(action == 'relative'){ //编辑基本信息
+            html = $("#edit-"+action).html();
+        }
+
+        layer.open({
+            type: 1,
+            title: openTitle,
+            skin: 'layui-layer-rim', //加上边框
+            area: openArea, //宽高
+            content: html
+        });
+        layui.form().render('select'); //刷新select选择框渲染
+    }
+
+    $(".flash_sale_del").click(function(){
+        var obj = $(this);
+        var thisId = obj.data("id");
+
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(index){
+            $("#flash_sale-id-"+thisId).remove();
+            $.ajax({
+                url:'flash_sale_del',
+                data:{id:thisId},
+                success:function(){
+
+                }
+            });
+            layer.close(index);
+        }, function(){
+            //layer.msg('按了取消', {icon: 1});
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>添加商品</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/js/global.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+    <!--百度编辑器-->
+    <link href="__PUBLIC__/umeditor/themes/default/css/umeditor.min.css" type="text/css" rel="stylesheet">
+    <script src="__PUBLIC__/umeditor/third-party/template.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/umeditor/umeditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/umeditor/umeditor.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/umeditor/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        #PROCUCT-GROUP-GOODS-ADD{width: 180px; height: 290px; border:1px solid #F7B824; float: left; margin: 0 10px 10px 0; background: white; position: relative}
+        #PROCUCT-GROUP-GOODS-ADD button{position: absolute; top: 50%; left: 50%; margin: -16% 0 0 -31%;}
+        .product-group-goods-list{width: 180px; height: 290px; border:1px solid #F7B824; float: left; margin: 0 10px 10px 0; background: white; position: relative}
+        .product-group-goods-list img{width:180px; height: 180px;}
+        .product-group-goods-list p{padding:5px; font-size: 16px; height: 35px; line-height: 1.3em; overflow: hidden;}
+        .product-group-goods-list strong{font-size: 16px; color:#FF5722;}
+        .product-group-goods-list del{color:#c2c2c2; margin-left: 5px;}
+        .product-group-goods-list dd{text-align: center;padding-top: 5px;}
+        .layui-upload-button{
+            width: 100%;height: 100%;border-style:none;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-tab layui-tab-brief" >
+    <ul class="layui-tab-title">
+        <li class="layui-this"><a class="layui-block" href="javascript:;">商品详情</a></li>
+        <li><a class="layui-block" href="good_list.html">返回商品列表</a></li>
+    </ul>
+</div>
+<form class="layui-form" id="form" method="post" enctype="multipart/form-data">
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>详细信息</li>
+           <!-- <li>商品属性</li>
+            <li>组合购买</li>-->
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table" lay-skin="line">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="85%">
+                    </colgroup>
+                    <tbody>
+                    <input type="hidden" name="goods_id" value="{$info.goods_id}">
+                    <tr>
+                        <td align="right"><strong>商品名称：</strong></td>
+                        <td class="layui-form-item">
+                            <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input size="50" type="text" placeholder="商品名称" autocomplete="off" class="layui-input" name="goods_name" value="{$info.goods_name}">
+                            </div>
+                            <!--<div class="layui-form-mid">
+                                -
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" placeholder="非必填，商品短名称" autocomplete="off" class="layui-input">
+                            </div>-->
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>商品编号：</strong></td>
+                        <td class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <input type="text" placeholder="不填自动生成" autocomplete="off" class="layui-input" name="goods_sn" value="{$info.goods_sn}">
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <strong>分类：</strong>
+                        </td>
+                        <td class="layui-form-item" id="GLOBAL-CATE">
+                        <div class="layui-input-inline">
+                        <select lay-verify="" name="cat_id">
+
+                            <empty name="info['cat_id']">
+                                <option value="">分类</option>
+                            <else />
+                                <option value="{$info.cat_id}">原分类--{$info.cate}</option>
+                            </empty>
+                            <foreach $cate as $vo>
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                        </select>
+                        </div>
+                        </td>
+                    </tr>
+                    <!--<tr>
+                        <td align="right"><strong>多级分类：</strong></td>
+                        <td class="layui-form-item" id="ASSISTANT-CATE">
+                            <button id="COPY-CATE" type="button" class="layui-btn layui-btn-warm">
+                                <i class="layui-icon">&#xe608;</i> 添加
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>关联商品组：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><select lay-verify="">
+                            <option value="">关联商品组</option>
+                            <option value="">不选择</option>
+                            <option value="1">十二生肖组</option>
+                            <option value="2">本命佛组</option>
+                        </select></div></td>
+                    </tr>-->
+                    <tr>
+                        <td align="right"><strong>商品主图：</strong></td>
+                        <td class="layui-form-item" id="addImghtml">
+                            <div class="layui-diy-upload">
+                                <img src="{$info['img']?$info['img']:'__PUBLIC__/images/baiwapak/iconfont-pic.png'}" id="LAY_demo_upload">
+                                <input type="hidden" name="main_img" value="{$info['img']}" id="main_img">
+                                <input type="file" name="img"  class="layui-upload-file" value="">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="right"><strong>细节图：</strong></td>
+                        <td class="layui-form-item">
+                            <foreach name="goodsImages" item="vo" key="k">
+                                <div class="layui-diy-upload-pic">
+                                    <a href="javascript:;"><i class="layui-icon">&#x1006;</i></a>
+                                    <img src="{$vo.image_url}">
+                                    <input type="hidden" name="goods_images[]" value="{$vo.image_url}">
+                                </div>
+                            </foreach>
+                            <div class="layui-diy-upload" id="goodsbefore">
+                                <img src="__PUBLIC__/images/baiwapak/iconfont-pic.png">
+                                <input type="file" name="goodsImages" class="layui-upload-file" value="" id="goodsImages">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>市场价：</strong></td>
+                        <td class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <input type="text" placeholder="0.00" autocomplete="off" class="layui-input" name="market_price" value="{$info.market_price}">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>本店价：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="0.00" autocomplete="off" class="layui-input" name="shop_price" value="{$info.shop_price}"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>库存：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="库存" autocomplete="off" class="layui-input" value="{$info.store_count}" name="store_count"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>排序：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="排序" autocomplete="off" class="layui-input" value="{$info.sort}" name="sort"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>发布日期：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input class="layui-input" placeholder="发布日期" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value="<?=date('Y-m-d H:i:s',time())?>" name="on_time"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>上下架：</strong></td>
+                        <td class="layui-form-item"> <div class="layui-input-inline">
+                            <if condition="$info['is_on_sale'] eq '0'">
+                                <input type="radio" name="is_on_sale" value="1" title="上架" >
+                                <input type="radio" name="is_on_sale" value="0" title="下架" checked>
+                            <else />
+                                <input type="radio" name="is_on_sale" value="1" title="上架" checked>
+                                <input type="radio" name="is_on_sale" value="0" title="下架" >
+                            </if>
+
+
+                        </div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table" lay-skin="line">
+                    <colgroup>
+                        <col width="20%">
+                        <col width="80%">
+                    </colgroup>
+                    <tbody>
+                    <!--<tr>
+                        <td align="right"><strong>标题：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="标题" autocomplete="off" class="layui-input"></div></td>
+                    </tr>-->
+                    <tr>
+                        <td align="right"><strong>关键词：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline">
+                            <input type="text" placeholder="关键词" autocomplete="off" class="layui-input" name="keywords" value="{$info.keywords}">
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>商品简介：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline" style="width: 300px;"><textarea name="goods_remark" placeholder="商品简介" class="layui-textarea">{$info.goods_remark}</textarea></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>内容详情：</strong></td>
+                        <td>
+                            <script type="text/plain" id="editor" style="width:800px; height:360px;"></script>
+                        </td>
+                    </tr>
+                    <!--<tr>
+                        <td align="right"><strong>标签：</strong></td>
+                        <td class="layui-form-item" id="ASSISTANT-TAGS">
+                            <div class="layui-inline">
+                                <div class="layui-form-mid">
+                                    <a href="javascript:layer.confirm('确定删除？');" class="layui-btn layui-btn-primary">
+                                        星座 <i class="layui-icon">&#xe640;</i>
+                                    </a>
+                                </div>
+                                <div class="layui-form-mid">
+                                    <a href="javascript:layer.confirm('确定删除吗');" class="layui-btn layui-btn-primary">
+                                        生肖 <i class="layui-icon">&#xe640;</i>
+                                    </a>
+                                </div>
+                                <div class="layui-form-mid">
+                                    <a href="javascript:layer.confirm('确定删除吗');" class="layui-btn layui-btn-primary">
+                                        哈哈 <i class="layui-icon">&#xe640;</i>
+                                    </a>
+                                </div>
+                                <div class="layui-input-inline" style="width: 100px;" ><input id="INPUT-TAG" type="text" placeholder="输入标签" autocomplete="off" class="layui-input"></div>
+                                <div class="layui-input-inline"><button id="ADD-TAG" type="button" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe61f;</i> 添加</button></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>阅读数：</strong></td>
+                        <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="阅读数" autocomplete="off" class="layui-input"></div></td>
+                    </tr>-->
+                    </tbody>
+                </table>
+            </div>
+            <!--<div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <tr>
+                        <td align="right"><strong>选择属性组：</strong></td>
+                        <td class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <select lay-filter="product-attribute-selected">
+                                    <option value="">属性组</option>
+                                    <option value="">不选择</option>
+                                    <option value="1">手链</option>
+                                    <option value="2">吊坠</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="layui-table" id="PRODUCT-ATTRUBUTE-BOX">
+                    <colgroup>
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>属性名</th>
+                        <th>属性值</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="product-attribute-id-123">
+                        <td>大小</td>
+                        <td><a href="javascript:;" class="layui-btn layui-btn-primary bw-attribute">16cm</a><a href="javascript:;" class="layui-btn layui-btn-primary bw-attribute">18cm</a> </td>
+                    </tr>
+                    <tr id="product-attribute-id-124">
+                        <td>男女</td>
+                        <td><a href="javascript:;" class="layui-btn layui-btn-primary bw-attribute">男</a><a href="javascript:;" class="layui-btn layui-btn-primary bw-attribute">女</a><a href="javascript:;" class="layui-btn layui-btn-primary bw-attribute">中性</a></td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td><button type="button" class="layui-btn layui-btn-normal layui-btn-big" id="BUILD-SKU-BTN">生成SKU</button>
+                        </td>
+                    </tr>
+                    <tr id="BUILD-SKU-BOX" style="display: none;">
+                        <td></td>
+                        <td>
+                            <table class="layui-table">
+                                <thead>
+                                <tr>
+                                    <th>大小</th>
+                                    <th>男女</th>
+                                    <th>市场价</th>
+                                    <th>价格</th>
+                                    <th>库存</th>
+                                    <th>预警值</th>
+                                    <th>商家货号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>16cm</td>
+                                    <td>男</td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="1" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="" autocomplete="off" class="layui-input"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>18cm</td>
+                                    <td>男</td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="1" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="" autocomplete="off" class="layui-input"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>16cm</td>
+                                    <td>女</td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="1" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="" autocomplete="off" class="layui-input"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>18cm</td>
+                                    <td>女</td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0.00" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="1" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="0" autocomplete="off" class="layui-input"></div></td>
+                                    <td><div class="layui-input-inline"><input size="5" type="text" placeholder="" autocomplete="off" class="layui-input"></div></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="layui-word-aux text-color-orange">属性值有选前台就显示，没选前台就不显示</div>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table" lay-skin="line">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="85%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td align="right"><strong>商品组：</strong></td>
+                        <td class="layui-form-item" id="PRODUCT-GROUP-GOODS-BOX">
+                            <dl class="product-group-goods-list" id="product-group-goods-id-111">
+                                <dt><img src="__PUBLIC__/images/baiwapak/login-bg-9.jpg"></dt>
+                                <dd>
+                                    <p>精雕属龙本命佛【普贤菩萨】 天然红玛瑙珠链吊坠</p>
+                                    <strong>￥123.00</strong><del>￥123456.00</del>
+                                </dd>
+                                <dd>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-left">
+                                        <i class="layui-icon">&#xe603;</i>
+                                    </button>
+                                    <button type="button" data-id="111" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-delete">
+                                        <i class="layui-icon">&#xe640;</i>
+                                    </button>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-right">
+                                        <i class="layui-icon">&#xe602;</i>
+                                    </button>
+                                </dd>
+                            </dl>
+                            <dl class="product-group-goods-list" id="product-group-goods-id-112">
+                                <dt><img src="__PUBLIC__/images/baiwapak/login-bg-8.jpg"></dt>
+                                <dd>
+                                    <p>精雕属龙本命佛【普贤菩萨】 天然红玛瑙珠链吊坠</p>
+                                    <strong>￥123.00</strong><del>￥123456.00</del>
+                                </dd>
+                                <dd>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-left">
+                                        <i class="layui-icon">&#xe603;</i>
+                                    </button>
+                                    <button type="button" data-id="112" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-delete">
+                                        <i class="layui-icon">&#xe640;</i>
+                                    </button>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-right">
+                                        <i class="layui-icon">&#xe602;</i>
+                                    </button>
+                                </dd>
+                            </dl>
+                            <dl class="product-group-goods-list" id="product-group-goods-id-113">
+                                <dt><img src="__PUBLIC__/images/baiwapak/login-bg-7.jpg"></dt>
+                                <dd>
+                                    <p>精雕属龙本命佛【普贤菩萨】 天然红玛瑙珠链吊坠</p>
+                                    <strong>￥123.00</strong><del>￥123456.00</del>
+                                </dd>
+                                <dd>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-left">
+                                        <i class="layui-icon">&#xe603;</i>
+                                    </button>
+                                    <button type="button" data-id="113" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-delete">
+                                        <i class="layui-icon">&#xe640;</i>
+                                    </button>
+                                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-right">
+                                        <i class="layui-icon">&#xe602;</i>
+                                    </button>
+                                </dd>
+                            </dl>
+                            <div id="PROCUCT-GROUP-GOODS-ADD">
+                                <button type="button" class="layui-btn layui-btn-warm" onclick="javascript:editInfo();">
+                                    <i class="layui-icon">&#xe608;</i> 添加商品
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>-->
+        </div>
+    </div>
+    <table class="layui-table" lay-skin="nob">
+        <colgroup>
+            <col width="15%">
+            <col width="85%">
+        </colgroup>
+        <tbody>
+        <tr class="action-bar">
+            <td align="right"></td>
+            <td class="layui-form-item"><button type="submit" class="layui-btn layui-btn-normal layui-btn-big" onclick="submit_form()">确 定</button></td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+
+
+<!--<div class="layui-hide" id="PRODUCT-FILTER">
+    <form class="layui-form" style="padding: 0 10px;">
+        <table class="layui-table" lay-skin="nob">
+            <tbody>
+            <tr>
+                <td>
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-mid">商品名称：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" placeholder="商品名称" autocomplete="off" class="layui-input">
+                            </div>
+                            <label class="layui-form-mid">商品编号：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" placeholder="商品编号" autocomplete="off" class="layui-input">
+                            </div>
+                            <button class="layui-btn layui-btn-normal">搜 索</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="layui-table">
+            <colgroup>
+                <col width="80">
+                <col width="300">
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>图片</th>
+                <th>商品名称</th>
+                <th>价格</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a href="" title="链接到商品"><img src="http://img.fuyuandian.com/images/201512/source_img/759_P_1450146970288.jpg@1e_1c_0o_0l_460h_460w_90q.src" width="80"></a></td>
+                <td>A13245689<br>ss精雕属鼠本命佛【千手观音】 天然黑曜石珠链吊坠</td>
+                <td>市场价：￥1234.89<br>本店价：￥1324.00</td>
+                <td><button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-add" title="加入" data-src="http://img.fuyuandian.com/images/201512/source_img/759_P_1450146970288.jpg@1e_1c_0o_0l_460h_460w_90q.src" data-marketprice="￥13245.00" data-price="￥1234.00" data-name="2精雕属鼠本命佛【千手观音】 天然黑曜石珠链吊坠" data-id="122">
+                    <i class="layui-icon">&#xe61f;</i> 加入
+                </button></td>
+            </tr>
+            <tr>
+                <td><a href="" title="链接到商品"><img src="http://img.fuyuandian.com/images/201512/source_img/759_P_1450146970288.jpg@1e_1c_0o_0l_460h_460w_90q.src" width="80"></a></td>
+                <td>A13245689<br>精雕属鼠本命佛【千手观音】 天然黑曜石珠链吊坠</td>
+                <td>市场价：￥1234.89<br>本店价：￥1324.00</td>
+                <td><button type="button" class="layui-btn layui-btn-small layui-btn-primary product-group-goods-add" title="加入" data-src="http://img.fuyuandian.com/images/201512/source_img/759_P_1450146970288.jpg@1e_1c_0o_0l_460h_460w_90q.src" data-marketprice="￥13245.00" data-price="￥1234.00" data-name="1精雕属鼠本命佛【千手观音】 天然黑曜石珠链吊坠" data-id="123">
+                    <i class="layui-icon">&#xe61f;</i> 加入
+                </button></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>-->
+
+<script type="text/javascript">
+
+    //编辑器
+    var serverPath = '__PUBLIC__/umeditor/php/',
+        um = UM.getEditor('editor', {
+            imageUrl:serverPath + "imageUp.php",
+            imagePath:serverPath,
+            lang:/^zh/.test(navigator.language || navigator.browserLanguage || navigator.userLanguage) ? 'zh-cn' : 'en',
+            langPath:UMEDITOR_CONFIG.UMEDITOR_HOME_URL + "lang/",
+            focus: true
+        });
+
+    insertHtml();
+
+    function insertHtml() {
+        //var value = prompt('插入html代码', '');
+        var value ='{$info.goods_content}';
+        um.execCommand('insertHtml', value)
+    }
+
+    function getAllHtml() {
+        //alert(UM.getEditor('editor').getAllHtml())
+        alert(UM.getEditor('editor').getContent())
+    }
+    //提交表单
+    function submit_form() {
+        $('#form').submit();
+    }
+    function editInfo(){
+        var html = '';
+        var openArea = ['720px', '360px'];
+        html = $("#PRODUCT-FILTER").html();
+
+        layer.open({
+            type: 1,
+            title: '选择组合购买商品',
+            skin: 'layui-layer-rim', //加上边框
+            area: openArea, //宽高
+            content: html
+        });
+        layui.form().render('select'); //刷新select选择框渲染
+    }
+
+    //layui
+    layui.use(['layer', 'element', 'form', 'laydate','upload'], function(){
+        var layer = layui.layer;
+        var form = layui.form();
+
+        //监听属性选择
+        form.on('select(product-attribute-selected)', function(data){
+            if(data.value == ''){
+                $("#PRODUCT-ATTRUBUTE-BOX tbody").html('<tr><td colspan="2" align="center">请选择您需要的属性组</td></tr>');
+            }else{
+                layer.msg('填充数据');
+            }
+            console.log(data.elem); //得到select原始DOM对象
+            console.log(data.value); //得到被选中的值
+        });
+
+        //上传主图
+        layui.upload({
+            url: "{:url('admin/goods/img_upload')}"
+            ,elem: '' //指定原始元素，默认直接查找class="layui-upload-file"
+            ,method: 'post' //上传接口的http类型
+            ,before: function(input){
+                //返回的参数item，即为当前的input DOM对象
+                console.log('文件上传中');
+            }
+            ,success: function(res){
+                //LAY_demo_upload.src = res.url;
+                console.log(res);
+                //显示图片
+                var img_res=res;
+               // LAY_demo_upload.src =img_res;
+                $('#LAY_demo_upload').attr("src",img_res);
+                //把值给input标签,用于提交给数据库
+                $("#main_img").val(img_res);
+            }
+        });
+
+        //上传细节图
+        layui.upload({
+            url: "{:url('admin/goods/img_upload')}"
+            ,elem: '#goodsImages' //指定原始元素，默认直接查找class="layui-upload-file"
+            ,method: 'post' //上传接口的http类型
+            ,before: function(input){
+                //返回的参数item，即为当前的input DOM对象
+                console.log('文件上传中');
+            }
+            ,success: function(res){
+                //LAY_demo_upload.src = res.url;
+                console.log(res);
+                var imgurl=res;
+                var html = '<div class="layui-diy-upload-pic"><a href="javascript:;"><i class="layui-icon">&#x1006;</i></a><img src="'+imgurl+'"><input type="hidden" name="goods_images[]" value="'+imgurl+'"></div>';
+                $('#goodsbefore').before(html);
+            }
+        });
+    });
+
+    /*$("#COPY-CATE").click(function(){
+        var copyCateHtml = $("#GLOBAL-CATE").html();
+        copyCateHtml += '<div class="layui-input-inline" style="width: 50px;">';
+        copyCateHtml += '<button type="button" class="layui-btn layui-btn-danger">';
+        copyCateHtml += '    <i class="layui-icon">&#x1006;</i>';
+        copyCateHtml += '</button>';
+        copyCateHtml += '</div>';
+        $("#COPY-CATE").before(copyCateHtml);
+        layui.form().render('select');
+    });*/
+   /* //图片删除
+    $(document.body).on("click", "#ASSISTANT-CATE .layui-btn-danger", function(){
+        var obj = $(this);
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(index){
+            obj.parent(".layui-input-inline").prev(".layui-input-inline").remove().end().remove();
+            layer.close(index);
+        }, function(){
+            //layer.msg('按了取消', {icon: 1});
+        });
+    });*/
+    $(document.body).on("click", ".layui-diy-upload-pic a", function(){
+        var obj = $(this);
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(index){
+            obj.parent(".layui-diy-upload-pic").remove();
+            layer.close(index);
+            /*var html = '<div class="layui-diy-upload"><img src="/public/images/baiwapak/iconfont-pic.png" id="LAY_demo_upload"><input type="hidden" name="main_img" value="" id="main_img"><div class="layui-box layui-upload-button"><form target="layui-upload-iframe" method="post" key="set-mine" enctype="multipart/form-data" action="img_upload"><input type="file" name="img" class="layui-upload-file" value=""></form><span class="layui-upload-icon"><i class="layui-icon"></i>上传图片</span></div></div>';
+            $("#addImghtml").html(html);*/
+        }, function(){
+            //layer.msg('按了取消', {icon: 1});
+        });
+    });
+</script>
+</body>
+</html>

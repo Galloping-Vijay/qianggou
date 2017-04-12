@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>详情页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link href="__PUBLIC__/css/flash_sale.css" rel="stylesheet" type="text/css" />
+    <script src="__PUBLIC__/js/global.js"></script>
+</head>
+
+<body>
+<div class="slide" id="slide3">
+    <ul>
+        <foreach $imgList as $img>
+            <li>
+                <a href="">
+                    <img src="{$img.image_url}" alt="">
+                    <p>{$img.image_name?$img.image_name:$img.goods.goods_name}</p>
+                </a>
+            </li>
+        </foreach>
+    </ul>
+    <!--<div class="dot">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>-->
+</div>
+<div class="product_info">
+    <div class="pi_left fl">
+        <span class="price">￥<em>{$good.price}</em></span><!--<span class="vip">VIP仅需1元</span>-->
+        <p class="original_price">原价：{$good.goods.shop_price}</p>
+        <p>共{$good.goods_num}份 / 剩{$good.goods_num-$good.order_num}份</p>
+    </div>
+    <div class="pi_right fr">
+        <!-- <a href="javascript:;" class="gray_btn">抢光啦</a> -->
+        <a href="javascript:;" class="orange_btn">购买</a>
+        <p>{$good.goods_concern}人关注</p>
+    </div>
+</div>
+<ul class="notice_list">
+    <li class="icon01">过期不退款</li>
+    <li class="icon02">每人限{$good.buy_limit}份</li>
+    <li class="icon03">免预约</li>
+    <li class="icon04">返1金币</li>
+    <li class="icon05">不提供打包</li>
+</ul>
+<!--<a class="open_vip">开通VIP仅需<em>1</em>元购买<span class="oi_right">去开通</span></a>-->
+<div class="buying_process">
+    <div class="bp">
+        <span></span>
+        <p>参与抢购</p>
+    </div>
+    <span class="arrow">--></span>
+    <div class="bp">
+        <span></span>
+        <p>抢购成功</p>
+    </div>
+    <span class="arrow">--></span>
+    <div class="bp">
+        <span></span>
+        <p>到店验证消费</p>
+    </div>
+</div>
+<!-- 商家详情联系方式 -->
+<div class="det_contact">
+    <p class="public_title">商家详情</p>
+    <div class="dc_content">
+        <a href="javascript:;" class="dc_content_info">
+            <p>{$shop.shop_name}</p>
+            <p>{$shop.start_hours}:{$shop.start_minute}-{$shop.end_hours}:{$shop.end_minute}营业</p>
+            <p>{$shop.address}</p>
+        </a>
+        <a href="tel://{$shop.tel}" class="icon_tel"></a>
+    </div>
+</div>
+<!-- 商家详情 -->
+<div class="box_detail">
+    <p class="public_title">商家详情</p>
+    <div class="bd_time">
+        <script>
+            // 倒计时
+            function GetRTime2(){
+                //var text = GetRTime('2016/02/27 17:34:00');
+                var end_time = GetRTime('{$good.end_time|date="Y/m/d H:i:s",###}');
+                $("#count_down").text(end_time);
+            }
+            setInterval(GetRTime2,1000);
+        </script>
+        <p><span class="orange">距离消费截止：</span>剩余: <span class="orange" id="count_down"></span></p>
+        <p>抢购开始：<span class="orange b_line">{$good.start_time|date="Y-m-d H:i:s",###}</span></p>
+        <p>抢购结束：<span class="orange b_line">{$good.end_time|date="Y-m-d H:i:s",###}</span></p>
+        <p>消费截止：<span>{$good.end_time|date="Y-m-d H:i:s",###}</span></p>
+    </div>
+    <p class="bd_product_title orange">商品详情：</p>
+    <div class="bd_content">
+       <!-- <img src="__PUBLIC__/images/home/1.jpg" alt="" />-->
+        {$good.goods.goods_content}
+    </div>
+    <div class="erweima">
+        <img src="{$shop.qrcode}" alt="二维码" />
+        <p>长按二维码关注我们呦</p>
+    </div>
+</div>
+<!-- 抢购成功 -->
+<div class="qg_success">
+    <p class="public_title">已有10人抢购成功</p>
+    <ul class="qg_success_ui">
+        <li>
+            <span class="pic"><img src="__PUBLIC__/images/home/img_tou.jpg" alt="" /></span>
+            <span class="user">张***斌</span>
+            <span class="time">2017-04-03 18:10:10</span>
+        </li>
+        <li>
+            <span class="pic"><img src="__PUBLIC__/images/home/img_tou.jpg" alt="" /></span>
+            <span class="user">张***斌<em class="vip">VIP</em></span>
+            <span class="time">2017-04-03 18:10:10</span>
+        </li>
+    </ul>
+</div>
+<script src="__PUBLIC__/js/zepto.min.js"></script>
+<script src="__PUBLIC__/js/swipeSlide.min.js"></script>
+<script>
+    $(function() {
+        $('#slide3').swipeSlide({
+            continuousScroll: true,
+            speed: 3000,
+            transitionType: 'cubic-bezier(0.22, 0.69, 0.72, 0.88)',
+            callback: function(i) {
+                $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
