@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>权限列表</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<table class="layui-table" lay-skin="nob">
+    <tbody>
+    <tr>
+        <td>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-mid">权限名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" placeholder="标题" autocomplete="off" class="layui-input">
+                    </div>
+                    <label class="layui-form-mid">权限组：</label>
+                    <div class="layui-input-inline">
+                        <select lay-verify="">
+                            <option value="">分类</option>
+                            <option value="">不选择</option>
+                            <option value="010">算命</option>
+                            <option value="021">手相</option>
+                        </select>
+                    </div>
+                    <button class="layui-btn layui-btn-normal">确 定</button>
+                    <a href="article-info.html" class="layui-btn layui-btn-green"><i class="layui-icon">&#xe608;</i> 新增文章 </a>
+                </div>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>权限名称</th>
+            <th>菜单组</th>
+            <th>菜单状态</th>
+            <th>排序</th>
+            <th>顶级菜单</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach $list as $vo >
+            <tr id="article-relevance-id-{$vo.id}">
+                <td>{$vo.id}</td>
+                <td>{$vo.name}</td>
+                <td>{$vo.parent}</td>
+                <td>{$vo['menu']}</td>
+                <td>{$vo.row_sort}</td>
+                <td>
+                    <input type="checkbox" lay-skin="switch" lay-filter="article-relevance-status">
+                </td>
+                <td><a href="" class="layui-btn layui-btn-small layui-btn-primary" title="编辑">
+                    <i class="layui-icon">&#xe614;</i>
+                </a>
+                    <a href="javascript:;" class="layui-btn layui-btn-small layui-btn-primary article-relevance-delete" title="删除" data-id="123">
+                        <i class="layui-icon">&#x1006;</i>
+                    </a></td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</form>
+<style>.pagination{display: inline-flex;}</style>
+
+<div class="layui-box" style="float:right;">{$page}
+</div>
+
+<script>
+    layui.use(['layer', 'element', 'form'], function(){
+        var element = layui.element();
+        var layer = layui.layer;
+        var form = layui.form();
+
+
+        //修改状态
+        form.on('switch(article-relevance-status)', function(data){
+            alert("监控到了");
+            console.log(data.elem); //得到checkbox原始DOM对象
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            console.log(data.value); //开关value值，也可以通过data.elem.value得到
+        });
+    });
+
+    $(".article-relevance-delete").click(function(){
+        var obj = $(this);
+        var thisId = obj.data("id");
+
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(index){
+            $("#article-relevance-id-"+thisId).remove();
+            layer.close(index);
+        }, function(){
+            //layer.msg('按了取消', {icon: 1});
+        });
+    });
+</script>
+</body>
+</html>

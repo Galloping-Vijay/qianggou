@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>新增推荐位</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<div class="layui-tab layui-tab-brief" >
+    <ul class="layui-tab-title">
+        <li class="layui-this"><a class="layui-block" href="javascript:;">编辑管理员</a></li>
+        <li><a class="layui-block" href="admin_list.html">返回管理员列表</a></li>
+    </ul>
+</div>
+<form class="layui-form" id="adminHandle" action="{:url('Admin/adminHandle')}" method="post">
+    <table class="layui-table" lay-skin="line">
+        <colgroup>
+            <col width="15%">
+            <col width="85%">
+        </colgroup>
+        <tbody>
+        <tr>
+            <input type="hidden" name="act" value="{$act}">
+            <input type="hidden" name="admin_id" value="{$info.admin_id}">
+            <td align="right"><strong>用户名：</strong></td>
+            <td class="layui-form-item"><div class="layui-input-inline"><input type="text" placeholder="请输入用户名" autocomplete="off" name="user_name" class="layui-input" value="{$info.user_name}"></div></td>
+        </tr>
+        <tr>
+            <td align="right"><strong>登录密码：</strong></td>
+            <td class="layui-form-item"><div class="layui-input-inline"><input type="password" placeholder="请输入密码" name="password" autocomplete="off" class="layui-input" value="{$info.password}"></div></td>
+        </tr>
+        <tr>
+            <td align="right"><strong>所属角色：</strong></td>
+            <td class="layui-form-item" id="GLOBAL-CATE">
+                <div class="layui-input-inline">
+                <select lay-verify="" name="role_id">
+                    <empty name="info.role_id">
+                        <option value="">选择角色</option>
+                    <else />
+                        <option value="{$info.role_id}">{$info.adminRole.role_name}</option>
+                    </empty>
+                    <foreach $admin_role as $role>
+                        <option value="{$role.role_id}">{$role.role_name}</option>
+                    </foreach>
+                </select>
+            </div>
+            </td>
+        </tr>
+        <tr class="action-bar">
+            <td align="right"></td>
+            <td class="layui-form-item"><button type="button" class="layui-btn layui-btn-normal layui-btn-big" onclick="adsubmit()">确 定</button></td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+
+
+<script>
+    layui.use(['layer', 'element', 'form', 'laydate'], function(){
+        var element = layui.element();
+        var layer = layui.layer;
+        var form = layui.form();
+
+    });
+    // 判断输入框是否为空
+    function adsubmit(){
+        if($('input[name=user_name]').val() == ''){
+            layer.msg('用户名不能为空！', {icon: 2,time: 1000});   //alert('少年，用户名不能为空！');
+            return false;
+        }
+        if($('input[name=password]').val() == ''){
+            layer.msg('密码不能为空！', {icon: 2,time: 1000});//alert('少年，密码不能为空！');
+            return false;
+        }
+        $('#adminHandle').submit();
+    }
+</script>
+</body>
+</html>

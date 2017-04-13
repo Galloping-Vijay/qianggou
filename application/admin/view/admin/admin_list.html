@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>管理员列表</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<div>
+<div class="layui-table" lay-skin="nob">
+<a href="admin_info.html" class="layui-btn layui-btn-green"><i class="layui-icon">&#xe608;</i> 新增管理员 </a>
+</div>
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>所属角色</th>
+            <th>加入时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach $admin_list as $vo>
+            <tr id="product-relevance-id-{$vo.admin_id}">
+                <td>{$vo.admin_id}</td>
+                <td>{$vo.user_name}</td>
+                <td>{$vo.AdminRole.role_name}</td>
+                <td>{$vo.add_time|date="Y-m-d H:i:s",###}</td>
+                <if condition="$vo.admin_id == 8">
+                    <td>不可编辑</td>
+                <else />
+                    <td><a href="{:url('admin_info',array('admin_id'=>$vo['admin_id']))}" class="layui-btn layui-btn-small layui-btn-primary" title="编辑">
+                        <i class="layui-icon">&#xe614;</i>
+                    </a>
+                        <a href="javascript:;" class="layui-btn layui-btn-small layui-btn-primary product-relevance-delete" title="删除" data-id="{$vo.admin_id}">
+                            <i class="layui-icon">&#x1006;</i>
+                        </a></td>
+                </if>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</form>
+<style>.pagination{display: inline-flex;}</style>
+
+<div class="layui-box" style="float:right;">{$page}
+</div>
+
+<script>
+    layui.use(['layer', 'element', 'form'], function(){
+        var element = layui.element();
+        var layer = layui.layer;
+        var form = layui.form();
+
+        //修改状态
+        form.on('switch(product-relevance-status)', function(data){
+            alert("监控到了");
+            console.log(data.elem); //得到checkbox原始DOM对象
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            console.log(data.value); //开关value值，也可以通过data.elem.value得到
+        });
+    });
+
+    $(".product-relevance-delete").click(function(){
+        var obj = $(this);
+        var thisId = obj.data("id");
+
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(index){
+            $("#product-relevance-id-"+thisId).remove();
+            $.ajax({
+                type:'post',
+                datatype:'json',
+                url:"adminHandle",
+                data:{act:'del',admin_id:thisId},
+                success:function(){
+
+                }
+            });
+            layer.close(index);
+        }, function(){
+            //layer.msg('按了取消', {icon: 1});
+        });
+    });
+</script>
+</body>
+</html>

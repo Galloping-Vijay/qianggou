@@ -9,10 +9,13 @@
 namespace app\admin\controller;
 
 
+use app\admin\model\Access;
+use app\admin\model\AdminRole;
 use think\Db;
 use think\Verify;
 use think\paginator;
 use think\session;
+use app\admin\model\Admin as AdminModel;
 
 class Admin extends Base
 {
@@ -37,102 +40,6 @@ class Admin extends Base
     }
 
     /**
-     * 修改管理员密码
-     * @return \think\mixed
-     */
-    public function modify_pwd(){
-        $admin_id = input('admin_id/d',0);
-        $oldPwd = input('old_pw/s');
-        $newPwd = input('new_pw/s');
-        $new2Pwd = input('new_pw2/s');
-
-        if($admin_id){
-            $info = Db::name('admin')->where("admin_id", $admin_id)->find();
-            $info['password'] =  "";
-            $this->assign('info',$info);
-        }
-
-        if(IS_POST){
-            //修改密码
-            $enOldPwd = encrypt($oldPwd);
-            $enNewPwd = encrypt($newPwd);
-            $admin = Db::name('admin')->where('admin_id' , $admin_id)->find();
-            if(!$admin || $admin['password'] != $enOldPwd){
-                $json = array(
-                    'status'=>-1,
-                    'msg'=>'旧密码不正确'
-                );
-            }else if($newPwd != $new2Pwd){
-                $json = array(
-                    'status'=>-1,
-                    'msg'=>'两次密码不一致'
-                );
-            }else{
-                $row = Db::name('admin')->where('admin_id' , $admin_id)->insert(array('password' => $enNewPwd));
-                if($row){
-                    $json = array(
-                        'status'=>1,
-                        'msg'=>'修改成功'
-                    );
-                }else{
-                    $json = array(
-                        'status'=>-1,
-                        'msg'=>'修改失败'
-                    );
-                }
-            }
-            exit(json_encode($json));
-        }
-        return $this->fetch();
-    }
-    public function admin_info(){
-        $admin_id = input('get.admin_id/d',0);
-        if($admin_id){
-            $info = Db::name('admin')->where("admin_id", $admin_id)->find();
-            $info['password'] =  "";
-            $this->assign('info',$info);
-        }
-        $act = empty($admin_id) ? 'add' : 'edit';
-        $this->assign('act',$act);
-        $role = Db::name('admin_role')->where('1=1')->select();
-        $this->assign('role',$role);
-        return $this->fetch();
-    }
-
-    public function adminHandle(){
-        $data = input('post.');
-        if(empty($data['password'])){
-            unset($data['password']);
-        }else{
-            $data['password'] = encrypt($data['password']);
-        }
-        if($data['act'] == 'add'){
-            unset($data['admin_id']);
-            $data['add_time'] = time();
-            if(Db::name('admin')->where("user_name", $data['user_name'])->count()){
-                $this->error("此用户名已被注册，请更换",U('Admin/Admin/admin_info'));
-            }else{
-                $r = Db::name('admin')->insert($data);
-            }
-        }
-
-        if($data['act'] == 'edit'){
-            $r = Db::name('admin')->where('admin_id', $data['admin_id'])->insert($data);
-        }
-
-        if($data['act'] == 'del' && $data['admin_id']>1){
-            $r = db::name('admin')->where('admin_id', $data['admin_id'])->delete();
-            exit(json_encode(1));
-        }
-
-        if($r){
-            $this->success("操作成功",url('Admin/Admin/index'));
-        }else{
-            $this->error("操作失败",url('Admin/Admin/index'));
-        }
-    }
-
-    /*
      * 管理员登陆
      */
     public function login(){
@@ -183,6 +90,79 @@ class Admin extends Base
     }
 
     /**
+     * 管理员列表
+     * @return mixed
+     */
+    public function admin_list(){
+        $admin= new AdminModel();
+        $admin_list = $admin->paginate(10);
+        $page = $admin_list->render();
+
+        $this->assign('admin_list',$admin_list);
+        $this->assign('page',$page);
+        return $this->fetch();
+    }
+    /**
+     * 管理员详情
+     * @return mixed
+     */
+    public function admin_info(){
+        $admin = new AdminModel();
+        $role = new AdminRole();
+        $admin_id = input('admin_id/d',0);
+        if($admin_id){
+            $info =$admin->where('admin_id',$admin_id)->find();
+        }else{
+            $info['admin_id']="";
+            $info['user_name']="";
+            $info['password']="";
+        }
+        $act = empty($admin_id) ? 'add' : 'edit';
+        $admin_role = $role->select();
+
+        $this->assign('act',$act);
+        $this->assign('info',$info);
+       $this->assign('admin_role',$admin_role);
+        return $this->fetch();
+    }
+
+    /**
+     * 管理员增删改操作
+     * */
+    public function adminHandle(){
+        $admin = new AdminModel();
+        $data = input('post.');
+        if(empty($data['password'])){
+            unset($data['password']);
+        }else{
+            $data['password'] = encrypt($data['password']);
+        }
+        if($data['act'] == 'add'){//新增管理员
+            unset($data['admin_id']);
+            unset($data['act']);
+
+            $data['add_time'] = time();
+            if($admin->where("user_name", $data['user_name'])->count()){
+                $this->error("此用户名已被注册，请更换",url('Admin/Admin/admin_info'));
+            }else{
+                $r = $admin->save($data);
+            }
+        }elseif ($data['act'] == 'edit'){//修改管理员信息
+            unset($data['act']);
+            $r = $admin->where('admin_id',$data['admin_id'])->update($data);
+
+        }elseif($data['act'] == 'del' && $data['admin_id']>1){//删除管理员
+            $r = $admin->where('admin_id', $data['admin_id'])->delete();
+            exit(json_encode(array('msg'=>'删除成功!','status'=>1)));
+        }
+        if($r){
+            $this->success("操作成功",url('Admin/Admin/admin_list'));
+        }else{
+            $this->error("操作失败",url('Admin/Admin/admin_info'));
+        }
+    }
+
+    /**
      * 验证码获取
      */
     public function vertify()
@@ -197,33 +177,50 @@ class Admin extends Base
         $Verify = new Verify($config);
         $Verify->entry("admin_login");
     }
-    //角色管理
+
+    /**
+     * 角色列表
+     * @return mixed
+     */
     public function role(){
-        /*$list = Db::name('admin_role')->order('role_id desc')->select();
-        $this->assign('list',$list);
-        return $this->fetch();*/
+        $role = new AdminRole();
+        $role_list = $role->paginate(10);
+        $page = $role_list->render();
+
+        $this->assign('list',$role_list);
+        $this->assign('page',$page);
+        return $this->fetch();
     }
 
+    /**
+     * 角色详情(添加修改)
+     * @return mixed
+     */
     public function role_info(){
-        $role_id = input('get.role_id/d');
+        $admin_role = new AdminRole();
+        $access = new Access();
+
+        $role_id = input('role_id/d');
         $detail = array();
         if($role_id){
-            $detail = Db::name('admin_role')->where("role_id",$role_id)->find();
+            //获取角色权限id
+            $detail = $admin_role->where("role_id",$role_id)->find()->toArray();
             $detail['act_list'] = explode(',', $detail['act_list']);
             $this->assign('detail',$detail);
         }
-        $right = Db::name('system_menu')->order('id')->select();
+        //权限菜单
+        $right = $access->where('pid','>',0)->order('id')->select();
+
+        $modules=[];
         foreach ($right as $val){
             if(!empty($detail)){
                 $val['enable'] = in_array($val['id'], $detail['act_list']);
             }
-            $modules[$val['group']][] = $val;
+            $modules[$val['menu_group']][] = $val;
         }
         //权限组
-        $group = array(
-            'order'=>'订单管理','goods'=>'商品管理','促销管理'=>'商品中心','article'=>'文章管理',
-            'operation'=>'运营管理','system'=>'系统功能','access'=>'权限管理'
-        );
+        $group = $access->where('pid',0)->column('name','id');
+        //dump($group);
         $this->assign('group',$group);
         $this->assign('modules',$modules);
         return $this->fetch();
@@ -246,13 +243,18 @@ class Admin extends Base
         }
     }
 
-    public function roleDel(){
+    /**
+     * 删除角色
+     */
+    public function role_del(){
+        $AdminModel = new AdminModel();
+        $role = new AdminRole();
         $role_id = input('post.role_id/d');
-        $admin = Db::name('admin')->where('role_id',$role_id)->find();
+        $admin = $AdminModel->where('role_id',$role_id)->find();
         if($admin){
-            exit(json_encode("请先清空所属该角色的管理员"));
+            exit(json_encode(0));
         }else{
-            $d = Db::name('admin_role')->where("role_id", $role_id)->delete();
+            $d = $role->where("role_id", $role_id)->delete();
             if($d){
                 exit(json_encode(1));
             }else{
@@ -273,95 +275,5 @@ class Admin extends Base
         return $this->fetch();*/
     }
 
-
-    /**
-     * 供应商列表
-     */
-    public function supplier()
-    {
-        $supplier_count = DB::name('suppliers')->count();
-        $page = DB::name('suppliers')->where('1=1')->paginate(20,$supplier_count);
-        $show = $page->render();
-        $supplier_list = DB::name('suppliers')
-            ->alias('s')
-            ->field('s.*,a.admin_id,a.user_name')
-            ->join('__ADMIN__ a','a.suppliers_id = s.suppliers_id','LEFT')
-           /* ->limit($page->$currentPage, $page->listRows)*/
-            ->select();
-        $this->assign('list', $supplier_list);
-        $this->assign('page', $show);
-        return $this->fetch();
-    }
-
-    /**
-     * 供应商资料
-     */
-    public function supplier_info()
-    {
-        $suppliers_id = input('get.suppliers_id/d', 0);
-        if ($suppliers_id) {
-            $info = DB::name('suppliers')
-                ->alias('s')
-                ->field('s.*,a.admin_id,a.user_name')
-                ->join('__ADMIN__ a','a.suppliers_id = s.suppliers_id','LEFT')
-                ->where(array('s.suppliers_id' => $suppliers_id))
-                ->find();
-            $this->assign('info', $info);
-        }
-        $act = empty($suppliers_id) ? 'add' : 'edit';
-        $this->assign('act', $act);
-        $admin = Db::name('admin')->field('admin_id,user_name')->where('1=1')->select();
-        $this->assign('admin', $admin);
-        return $this->fetch();
-    }
-
-    /**
-     * 供应商增删改
-     */
-    public function supplierHandle()
-    {
-        $data = input('post.');
-        $suppliers_model = Db::name('suppliers');
-        //增
-        if ($data['act'] == 'add') {
-            unset($data['suppliers_id']);
-            $count = $suppliers_model->where("suppliers_name", $data['suppliers_name'])->count();
-            if ($count) {
-                $this->error("此供应商名称已被注册，请更换", url('Admin/Admin/supplier_info'));
-            } else {
-                $r = $suppliers_model->insertGetId($data);
-                if (!empty($data['admin_id'])) {
-                    $admin_data['suppliers_id'] = $r;
-                    Db::name('admin')->where(array('suppliers_id' => $admin_data['suppliers_id']))->insert(array('suppliers_id' => 0));
-                    Db::name('admin')->where(array('admin_id' => $data['admin_id']))->insert($admin_data);
-                }
-            }
-        }
-        //改
-        if ($data['act'] == 'edit' && $data['suppliers_id'] > 0) {
-            $r = $suppliers_model->where('suppliers_id',$data['suppliers_id'])->insert($data);
-            if (!empty($data['admin_id'])) {
-                $admin_data['suppliers_id'] = $data['suppliers_id'];
-                Db::name('admin')->where(array('suppliers_id' => $admin_data['suppliers_id']))->insert(array('suppliers_id' => 0));
-                Db::name('admin')->where(array('admin_id' => $data['admin_id']))->insert($admin_data);
-            }
-        }
-        //删
-        if ($data['act'] == 'del' && $data['suppliers_id'] > 0) {
-            $r = $suppliers_model->where('suppliers_id', $data['suppliers_id'])->delete();
-            Db::name('admin')->where(array('suppliers_id' => $data['suppliers_id']))->insert(array('suppliers_id' => 0));
-        }
-
-        if ($r !== false) {
-            $this->success("操作成功", url('Admin/Admin/supplier'));
-        } else {
-            $this->error("操作失败", url('Admin/Admin/supplier'));
-        }
-    }
-
-    //管理员列表
-    public function admin_list(){
-
-    }
 
 }

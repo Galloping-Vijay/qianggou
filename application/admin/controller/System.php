@@ -9,6 +9,8 @@
 namespace app\admin\controller;
 
 
+use app\admin\model\Access;
+
 class System extends Base
 {
     //网站设置
@@ -20,8 +22,14 @@ class System extends Base
 
     }
     //权限列表
-    public function right_list(){
+    public function role_list(){
+        $role =new Access();
+        $role_list = $role->paginate(10);
+        $page =$role_list->render();
 
+        $this->assign('page',$page);
+        $this->assign('list',$role_list);
+        return $this->fetch();
     }
 
 }

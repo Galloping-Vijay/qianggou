@@ -30,6 +30,7 @@ class Index extends Base
 
     public function home(){
         //echo getAllMenu();
-        echo '控制面板';
+        //echo '控制面板';
+        return $this->fetch();
     }
 }

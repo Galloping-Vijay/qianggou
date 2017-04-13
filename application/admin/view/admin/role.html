@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>管理员列表</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<div>
+    <div class="layui-table" lay-skin="nob">
+        <a href="role_info.html" class="layui-btn layui-btn-green"><i class="layui-icon">&#xe608;</i> 新增角色 </a>
+    </div>
+    <form class="layui-form">
+        <table class="layui-table">
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>角色名称</th>
+                <th>角色描述</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach $list as $vo>
+                <tr id="product-relevance-id-{$vo.role_id}">
+                    <td>{$vo.role_id}</td>
+                    <td>{$vo.role_name}</td>
+                    <td>{$vo.role_desc}</td>
+                    <if condition="$vo.role_id == 1">
+                        <td>不可编辑</td>
+                        <else />
+                        <td><a href="{:url('role_info',array('role_id'=>$vo['role_id']))}" class="layui-btn layui-btn-small layui-btn-primary" title="编辑">
+                            <i class="layui-icon">&#xe614;</i>
+                        </a>
+                            <a href="javascript:;" class="layui-btn layui-btn-small layui-btn-primary product-relevance-delete" title="删除" data-id="{$vo.role_id}">
+                                <i class="layui-icon">&#x1006;</i>
+                            </a></td>
+                    </if>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+    <style>.pagination{display: inline-flex;}</style>
+
+    <div class="layui-box" style="float:right;">{$page}
+    </div>
+
+    <script>
+        layui.use(['layer', 'element', 'form'], function(){
+            var element = layui.element();
+            var layer = layui.layer;
+            var form = layui.form();
+
+            //修改状态
+            form.on('switch(product-relevance-status)', function(data){
+                alert("监控到了");
+                console.log(data.elem); //得到checkbox原始DOM对象
+                console.log(data.elem.checked); //开关是否开启，true或者false
+                console.log(data.value); //开关value值，也可以通过data.elem.value得到
+            });
+        });
+
+        $(".product-relevance-delete").click(function(){
+            var obj = $(this);
+            var thisId = obj.data("id");
+
+            layer.confirm('确定删除？', {
+                btn: ['确定','取消'] //按钮
+            }, function(index){
+
+                $.ajax({
+                    type:'post',
+                    datatype:'json',
+                    url:"role_del",
+                    data:{role_id:thisId},
+                    success:function(data){
+                        if(data ==1){
+                            $("#product-relevance-id-"+thisId).remove();
+                        }else if(data == 0){
+                            layer.alert('请先清空所属该角色的管理员', {icon: 2});
+                        }else{
+                            layer.alert('删除失败', {icon: 2});
+                        }
+                    }
+                });
+                layer.close(index);
+            }, function(){
+                //layer.msg('按了取消', {icon: 1});
+            });
+        });
+    </script>
+</body>
+</html>
