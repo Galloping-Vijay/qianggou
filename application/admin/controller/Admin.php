@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 
 use app\admin\model\Access;
+use app\admin\model\AdminLog;
 use app\admin\model\AdminRole;
 use think\Db;
 use think\Verify;
@@ -206,38 +207,49 @@ class Admin extends Base
             //获取角色权限id
             $detail = $admin_role->where("role_id",$role_id)->find()->toArray();
             $detail['act_list'] = explode(',', $detail['act_list']);
-            $this->assign('detail',$detail);
+
+        }else{
+            $detail['role_id']='';
+            $detail['role_name']='';
+            $detail['role_desc']='';
+            $detail['act_list']='';
         }
         //权限菜单
         $right = $access->where('pid','>',0)->order('id')->select();
 
         $modules=[];
         foreach ($right as $val){
-            if(!empty($detail)){
+            if(!empty($detail['role_id'])){
                 $val['enable'] = in_array($val['id'], $detail['act_list']);
+            }else{
+                $val['enable'] =false;
             }
             $modules[$val['menu_group']][] = $val;
         }
         //权限组
         $group = $access->where('pid',0)->column('name','id');
-        //dump($group);
+
+        $this->assign('detail',$detail);
         $this->assign('group',$group);
         $this->assign('modules',$modules);
         return $this->fetch();
     }
 
-    public function roleSave(){
-        $data = input('post.');
-        $res = $data['data'];
-        $res['act_list'] = is_array($data['right']) ? implode(',', $data['right']) : '';
-        if(empty($data['role_id'])){
-            $r = Db::name('admin_role')->insert($res);
+    public function role_save(){
+        $role = new  AdminRole();
+        $res = input('post.');
+
+        $res['act_list'] = is_array($res['act_list']) ? implode(',', $res['act_list']) : '';
+
+
+        if(empty($res['role_id'])){
+            $r =AdminRole::create($res);
         }else{
-            $r = Db::name('admin_role')->where('role_id', $data['role_id'])->insert($res);
+            $r = $role->where('role_id', $res['role_id'])->update($res);
         }
         if($r){
             adminLog('管理角色');
-            $this->success("操作成功!",url('Admin/Admin/role_info',array('role_id'=>$data['role_id'])));
+            $this->success("操作成功!",url('Admin/Admin/role'));
         }else{
             $this->success("操作失败!",url('Admin/Admin/role'));
         }
@@ -264,15 +276,24 @@ class Admin extends Base
     }
     //管理员日志
     public function log(){
-        /*$p = input('p/d',1);
-        $logs = DB::name('admin_log')->alias('l')->join('__ADMIN__ a','a.admin_id =l.admin_id')->order('log_time DESC')->page($p.',20')->select();
+        $admin_log = new AdminLog();
+
+        $count=$admin_log->count();
+        $logs = $admin_log->order('log_time DESC')->paginate(10,$count);
+        $Page = $logs->render();
+
         $this->assign('list',$logs);
-        $count = DB::name('admin_log')->where('1=1')->count();
-        $Page = DB::name('admin_log')->where('1=1')->paginate(20,$count);
-        $show = $Page->render();
+        $this->assign('count',$count);
         $this->assign('pager',$Page);
-        $this->assign('page',$show);
-        return $this->fetch();*/
+        return $this->fetch();
+    }
+
+    //测试
+    public function ceshi(){
+        //$condition=['user_name'=>'客服'];
+        //$admin_info = Db::name('admin')->join(PREFIX.'admin_role', PREFIX.'admin.role_id='.PREFIX.'admin_role.role_id','INNER')->where($condition)->find();
+         $act_list = session('cat_list');
+        echo $act_list;
     }
 
 

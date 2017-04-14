@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>订单统计</title>
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/lib/jquery-1.9.0.min.js"></script>
+    <script src="__PUBLIC__/layui/layui.js"></script>
+</head>
+<body>
+<table class="layui-table" lay-skin="nob">
+    <tbody>
+    <tr>
+        <td>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-mid">查询周期：</label>
+                    <div class="layui-input-inline"><input class="layui-input" placeholder="开始日期" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"></div><div class="layui-form-mid">-</div><div class="layui-input-inline"><input class="layui-input" placeholder="结束日期" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"></div>
+                    <button class="layui-btn layui-btn-normal">确 定</button>
+                    <a href="javascript:;" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe601;</i> 下载Excel </a>
+                </div>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>操作管理员</th>
+            <th>日志描述</th>
+            <th>操作地址</th>
+            <th>日志时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach $list as $vo>
+            <tr id="order-count-id-{$vo.log_id}">
+                <td>{$vo.log_id}</td>
+                <td>{$vo.Admin.user_name}</td>
+                <td>{$vo.log_id}</td>
+                <td>{$vo.log_url}</td>
+                <td>{$vo.log_time|date="Y-m-d H:i:s",###}</td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</form>
+<style>
+    .pagination{display: inline-flex;float: right}
+</style>
+{$pager}
+<script>
+    layui.use(['layer', 'element', 'form', 'laydate'], function(){
+        var element = layui.element();
+        var layer = layui.layer;
+        var form = layui.form();
+    });
+</script>
+</body>
+</html>

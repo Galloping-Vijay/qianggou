@@ -50,8 +50,10 @@ function format_bytes($size, $delimiter = '') {
     return round($size, 2) . $delimiter . $units[$i];
 }
 
-
-//获取所有菜单
+/**
+ * 获取所有菜单
+ * @return string
+ */
 function getAllMenu(){
     $menu = Db::name('Access');
     //获取最大组值
@@ -82,35 +84,55 @@ function getAllMenu(){
     }
     return json_encode($menu_list,JSON_UNESCAPED_UNICODE);
 }
+
+/**
+ * 过滤管理员菜单
+ * @return mixed
+ */
 function getMenuArr(){
-    $menuArr = include APP_PATH.'admin/conf/menu.php';
+
+    $menu = Db::name('Access');
+    //获取用户权限集
     $act_list = session('act_list');
-    if($act_list != 'all' && !empty($act_list)){
-        $right = Db::name('system_menu')->where("id in ($act_list)")->cache(true)->column('right',true);
-        foreach ($right as $val){
-            $role_right .= $val.',';
-        }
+    $list=explode(',', $act_list);
+    //echo $act_list;
 
-        foreach($menuArr as $k=>$val){
-            foreach ($val['child'] as $j=>$v){
-                foreach ($v['child'] as $s=>$son){
-                    if(!strpos($role_right,$son['op'].'Controller@'.$son['act'])){
-                        unset($menuArr[$k]['child'][$j]['child'][$s]);//过滤菜单
-                    }
-                }
-            }
-        }
-
-        foreach ($menuArr as $mk=>$mr){
-            foreach ($mr['child'] as $nk=>$nrr){
-                if(empty($nrr['child'])){
-                    unset($menuArr[$mk]['child'][$nk]);
-                }
-            }
+    //获取各个分组
+    $menu_list=array();
+    //查询用户拥有权限的二级菜单
+    $role = $menu->where("id in ($act_list)")->cache(true)->select();
+    $p_id =[];
+    foreach($role as $val){
+        if(!in_array($val['pid'],$p_id)){
+            array_push($p_id,$val['pid']);
         }
     }
-    return $menuArr;
+    foreach($p_id as $p){
+        $menu_group = $menu->where('menu_group','in',$p)->select();
+        $childMenus=array();
+        foreach ($menu_group as $v1){
+            if($v1['id']==$p){
+                unset($v1);
+            }else{//获取子节点
+                if(in_array($v1['id'],$list)){
+                    $childMenusOne=[
+                        "id"=>$v1['id'],"name"=>$v1['name'],"parentId"=>$v1['pid'],"url"=>"__ADMIN__/".$v1['module'].'/'.$v1['action'], "icon"=>"","order"=>"1","isHeader"=>$v1['isHeader'],"childMenus"=>""
+                    ];
+                    array_push($childMenus,$childMenusOne);
+                }
+            }
+        }
+        //获取父节点 id就是$i;
+        $pid_menu=$menu->find($p);
+        $one=[
+            "id"=>$pid_menu['id'],"name"=>$pid_menu['name'],"parentId"=>$pid_menu['pid'],"url"=>"","icon"=>"","order"=>"1","isHeader"=>$pid_menu['isHeader'],"childMenus"=>$childMenus
+        ];
+
+        array_push($menu_list,$one);
+    }
+    return json_encode($menu_list,JSON_UNESCAPED_UNICODE);
 }
+
 function respose($res){
     exit(json_encode($res));
 }
